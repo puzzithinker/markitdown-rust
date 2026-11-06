@@ -30,6 +30,7 @@ mod engine;
 mod error;
 mod fetch;
 mod normalize;
+mod save;
 mod stream_info;
 
 pub use convert::{
@@ -38,6 +39,7 @@ pub use convert::{
 };
 pub use engine::MarkItDown;
 pub use error::{Error, FailedAttempt, Result};
+pub use save::{beside_source_path, save_markdown, OutputDestination, SaveError, SavedMarkdown};
 pub use stream_info::StreamInfo;
 
 /// Crate version, from `Cargo.toml`.

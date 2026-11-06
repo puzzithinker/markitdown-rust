@@ -9,6 +9,10 @@ readme = "README.md"
 keywords = ["markdown", "pdf", "docx", "document", "llm"]
 categories = ["text-processing", "command-line-utilities"]
 
+[workspace]
+members = [".", "src-tauri"]
+resolver = "2"
+
 [[bin]]
 name = "markitdown"
 path = "src/main.rs"

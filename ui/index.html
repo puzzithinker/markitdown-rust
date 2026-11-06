@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MarkItDown</title>
+    <link rel="stylesheet" href="app.css" />
+  </head>
+  <body>
+    <main>
+      <header>
+        <h1>MarkItDown</h1>
+        <p>Drop one file. The app converts it and writes Markdown.</p>
+      </header>
+
+      <div id="drop-target" tabindex="0" role="button" aria-label="Drop a file to convert">
+        <strong>Drop a file here</strong>
+        <span>or choose one below</span>
+      </div>
+
+      <div class="controls">
+        <button id="choose-file" type="button">Choose file</button>
+        <button id="convert" type="button">Convert</button>
+      </div>
+
+      <fieldset>
+        <legend>Output</legend>
+        <label class="choice">
+          <input type="radio" name="mode" value="beside" checked />
+          Save beside the source file
+        </label>
+        <label class="choice">
+          <input type="radio" name="mode" value="explicit" />
+          Save to a chosen path
+        </label>
+        <div id="output-row">
+          <input id="output-path" type="text" placeholder="Path ending in .md" spellcheck="false" />
+          <button id="choose-output" type="button">Browse</button>
+        </div>
+      </fieldset>
+
+      <p id="source-label"></p>
+      <p id="status" role="status"></p>
+      <p id="written-path"></p>
+      <pre id="preview" hidden></pre>
+      <div class="controls">
+        <button id="copy" type="button" hidden>Copy Markdown</button>
+        <button id="confirm-replace" type="button" hidden>Replace existing file</button>
+      </div>
+      <input id="file-input" type="file" hidden />
+    </main>
+    <script src="app.js"></script>
+  </body>
+</html>

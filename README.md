@@ -24,6 +24,18 @@ cargo test
 
 The binary is `target/release/markitdown`.
 
+## Desktop
+
+```bash
+cargo run -p markitdown-desktop
+```
+
+The window takes one file by drag-and-drop or the file chooser and converts it
+with this library. Beside the source writes `notes.md` next to `notes.csv`.
+A chosen path writes only that file. The panel shows the written path and the
+Markdown, and you can copy it. An existing destination stays until you confirm
+replacement. A failed conversion writes nothing.
+
 ## Command
 
 ```bash
