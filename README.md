@@ -36,6 +36,23 @@ A chosen path writes only that file. The panel shows the written path and the
 Markdown, and you can copy it. An existing destination stays until you confirm
 replacement. A failed conversion writes nothing.
 
+On Windows, install [Rust](https://rustup.rs/) 1.89 or newer with the MSVC
+toolchain, and the
+[C++ build tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/)
+workload "Desktop development with C++". Current Windows 10 and Windows 11
+already include the WebView2 runtime. Node is not required. From the repository
+root:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\build-desktop-windows.ps1
+```
+
+Or double-click `scripts\build-desktop-windows.cmd`. The program is
+`target\release\markitdown-desktop.exe`. Pass `-Run` to start it after the
+build, or `-Debug` for an unoptimized build. The script passes `--locked`, so
+the `hayro-jbig2` 0.3.0 pin stays in place. This produces the executable, not
+an installer.
+
 ## Command
 
 ```bash
