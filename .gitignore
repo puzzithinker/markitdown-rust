@@ -1,3 +1,4 @@
 /target
 **/*.rs.bk
 src-tauri/gen/
+__pycache__/

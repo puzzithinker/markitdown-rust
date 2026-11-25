@@ -20,19 +20,27 @@ impl StreamInfo {
 
     /// Fill filename, extension, and local path from a filesystem path.
     pub fn from_path(path: &Path) -> Self {
-        let filename = path
-            .file_name()
-            .map(|name| name.to_string_lossy().into_owned());
-        let extension = path
-            .extension()
-            .and_then(|ext| some_extension(&ext.to_string_lossy()));
-        Self {
-            mimetype: None,
-            extension,
-            charset: None,
-            filename,
-            local_path: Some(path.display().to_string()),
-            url: None,
+        let mut info = Self::new();
+        info.fill_missing_from_path(path);
+        info
+    }
+
+    /// Fill filename, extension, and local path when those fields are empty.
+    ///
+    /// Hints the caller already set are left alone.
+    pub(crate) fn fill_missing_from_path(&mut self, path: &Path) {
+        if self.filename.is_none() {
+            self.filename = path
+                .file_name()
+                .map(|name| name.to_string_lossy().into_owned());
+        }
+        if self.local_path.is_none() {
+            self.local_path = Some(path.display().to_string());
+        }
+        if self.extension.is_none() {
+            if let Some(extension) = path.extension() {
+                self.extension = some_extension(&extension.to_string_lossy());
+            }
         }
     }
 

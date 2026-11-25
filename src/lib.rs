@@ -39,7 +39,10 @@ pub use convert::{
 };
 pub use engine::MarkItDown;
 pub use error::{Error, FailedAttempt, Result};
-pub use save::{beside_source_path, save_markdown, OutputDestination, SaveError, SavedMarkdown};
+pub use save::{
+    beside_source_path, confirmation_message, save_markdown, OutputDestination, SaveError,
+    SavedMarkdown,
+};
 pub use stream_info::StreamInfo;
 
 /// Crate version, from `Cargo.toml`.

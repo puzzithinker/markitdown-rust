@@ -90,7 +90,6 @@ pub type DynConverter = Arc<dyn Converter>;
 pub(crate) struct Registration {
     pub converter: DynConverter,
     pub priority: f32,
-    pub order: u32,
 }
 
 #[cfg(test)]

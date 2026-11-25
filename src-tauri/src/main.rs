@@ -1,46 +1,35 @@
-use std::path::PathBuf;
+mod command;
 
-use markitdown::{save_markdown, OutputDestination, SaveError};
-use serde::Serialize;
+use command::save_conversion;
 
-/// Result the drop panel renders. The command is a thin call into `save_markdown`.
-#[derive(Debug, Serialize)]
-#[serde(tag = "status", rename_all = "camelCase")]
-pub enum SaveResponse {
-    Written { path: String, markdown: String },
-    NeedsConfirmation { path: String, message: String },
-    Failed { message: String },
+/// The panel test reads this file. Stderr is shared with the window's own logs,
+/// so a line there can be torn apart before the test sees a whole JSON value.
+fn report_smoke(json: &str) {
+    if let Ok(path) = std::env::var("MARKITDOWN_SMOKE_FILE") {
+        let path = std::path::PathBuf::from(path);
+        let mut partial = path.as_os_str().to_os_string();
+        partial.push(".partial");
+        let partial = std::path::PathBuf::from(partial);
+        if let Err(err) =
+            std::fs::write(&partial, json).and_then(|_| std::fs::rename(&partial, &path))
+        {
+            eprintln!("MARKITDOWN_SMOKE file: {err}");
+        }
+    }
+    eprintln!("MARKITDOWN_SMOKE {json}");
 }
 
-#[tauri::command]
-fn save_conversion(
-    source: String,
-    destination: Option<String>,
-    replace_existing: bool,
-) -> SaveResponse {
-    let destination = match destination {
-        Some(path) => OutputDestination::Explicit(PathBuf::from(path)),
-        None => OutputDestination::BesideSource,
+fn smoke_from_env() {
+    let source = match std::env::var("MARKITDOWN_SMOKE_SOURCE") {
+        Ok(source) => source,
+        Err(_) => return,
     };
-    match save_markdown(
-        PathBuf::from(&source).as_path(),
-        &destination,
-        replace_existing,
-    ) {
-        Ok(saved) => SaveResponse::Written {
-            path: saved.path.display().to_string(),
-            markdown: saved.markdown,
-        },
-        Err(SaveError::NeedsConfirmation { path }) => {
-            let message = SaveError::NeedsConfirmation { path: path.clone() }.to_string();
-            SaveResponse::NeedsConfirmation {
-                path: path.display().to_string(),
-                message,
-            }
-        }
-        Err(err) => SaveResponse::Failed {
-            message: err.to_string(),
-        },
+    let destination = std::env::var("MARKITDOWN_SMOKE_DEST").ok();
+    let replace_existing = std::env::var("MARKITDOWN_SMOKE_REPLACE").ok().as_deref() == Some("1");
+    let response = save_conversion(source, destination, replace_existing);
+    match serde_json::to_string(&response) {
+        Ok(json) => report_smoke(&json),
+        Err(err) => eprintln!("MARKITDOWN_SMOKE {err}"),
     }
 }
 
@@ -48,16 +37,7 @@ fn main() {
     tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init())
         .setup(|_app| {
-            if let Ok(source) = std::env::var("MARKITDOWN_SMOKE_SOURCE") {
-                let destination = std::env::var("MARKITDOWN_SMOKE_DEST").ok();
-                let replace_existing =
-                    std::env::var("MARKITDOWN_SMOKE_REPLACE").ok().as_deref() == Some("1");
-                let response = save_conversion(source, destination, replace_existing);
-                match serde_json::to_string(&response) {
-                    Ok(json) => eprintln!("MARKITDOWN_SMOKE {json}"),
-                    Err(err) => eprintln!("MARKITDOWN_SMOKE {err}"),
-                }
-            }
+            smoke_from_env();
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![save_conversion])

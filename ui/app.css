@@ -134,6 +134,19 @@ fieldset {
   color: inherit;
 }
 
+#notice {
+  min-height: 1.2em;
+  margin: 8px 0 0;
+  font-size: 0.92rem;
+  color: #5c564c;
+}
+
+@media (prefers-color-scheme: dark) {
+  #notice {
+    color: #c8c0b4;
+  }
+}
+
 #status {
   min-height: 1.4em;
   margin: 8px 0;
